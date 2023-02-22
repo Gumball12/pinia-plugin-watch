@@ -1,0 +1,65 @@
+{
+  "name": "pinia-plugin-watch",
+  "version": "0.0.0",
+  "description": "The easiest way to watch for your Pinia State.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gumball12/pinia-plugin-watch.git"
+  },
+  "author": {
+    "name": "Gumball12",
+    "email": "to@shj.rip",
+    "url": "https://github.com/Gumball12"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Gumball12/pinia-plugin-watch/issues"
+  },
+  "homepage": "https://github.com/Gumball12/pinia-plugin-watch#readme",
+  "keywords": [
+    "pinia",
+    "pinia-plugin",
+    "pinia-watch",
+    "pinia-plugin-watch",
+    "watch",
+    "watch state",
+    "vuex"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "lint": "eslint --ext .ts ./src",
+    "build": "tsup",
+    "test": "vitest run --coverage",
+    "release": "standard-version",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.6",
+    "@typescript-eslint/eslint-plugin": "^5.53.0",
+    "@typescript-eslint/parser": "^5.53.0",
+    "@vitest/coverage-c8": "^0.28.5",
+    "eslint": "^8.34.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.1.2",
+    "lodash-es": "^4.17.21",
+    "prettier": "^2.8.4",
+    "standard-version": "^9.5.0",
+    "tsup": "^6.6.3",
+    "typescript": "^4.9.5",
+    "vitest": "^0.28.5",
+    "vue-demi": "^0.13.11"
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "eslint --fix",
+      "prettier --parser=typescript --write"
+    ]
+  }
+}
