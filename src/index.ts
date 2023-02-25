@@ -1,4 +1,4 @@
-import { watch, install, Ref, ToRefs } from 'vue-demi';
+import { watch, install } from 'vue-demi';
 import { PiniaPluginContext } from 'pinia';
 
 type WatchHandler<T> = (payload: T) => unknown;
@@ -15,11 +15,7 @@ type WatchHandlerObject<T> = T extends object
 type Watcher<T> = WatchHandler<T> | WatchHandlerObject<T>;
 
 type WatchOptions<S extends object> = {
-  [K in keyof S]?: S[K] extends Ref<infer T>
-    ? Watcher<T>
-    : S[K] extends ToRefs<infer T extends object>
-    ? WatchOptions<T> | Watcher<T>
-    : S[K] extends object
+  [K in keyof S]?: S[K] extends object
     ? WatchOptions<S[K]> | Watcher<S[K]>
     : Watcher<S[K]>;
 };
