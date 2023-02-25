@@ -3,15 +3,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { WatchPiniaPlugin } from '@/index';
 import { createApp, reactive, ref, nextTick } from 'vue';
 
-describe('Option Store (Deep watch)', () => {
-  beforeEach(() => {
-    const app = createApp({});
-    const pinia = createPinia();
-    pinia.use(WatchPiniaPlugin);
-    app.use(pinia);
-    setActivePinia(pinia);
-  });
+beforeEach(() => {
+  const app = createApp({});
+  const pinia = createPinia();
+  pinia.use(WatchPiniaPlugin);
+  app.use(pinia);
+  setActivePinia(pinia);
+});
 
+describe('Option Store (Deep watch)', () => {
   it('update baz', async () => {
     const { fooSpy, barSpy, bazSpy, store } = useStore();
 
@@ -176,14 +176,6 @@ const useStore = () => {
 };
 
 describe('Setup Store (Deep watch)', () => {
-  beforeEach(() => {
-    const app = createApp({});
-    const pinia = createPinia();
-    pinia.use(WatchPiniaPlugin);
-    app.use(pinia);
-    setActivePinia(pinia);
-  });
-
   it('update baz', async () => {
     const { fooSpy, barSpy, bazSpy, store } = useSetupStore();
 
@@ -361,14 +353,6 @@ const useSetupStore = () => {
 };
 
 describe('Option Store (Non-deep watch)', () => {
-  beforeEach(() => {
-    const app = createApp({});
-    const pinia = createPinia();
-    pinia.use(WatchPiniaPlugin);
-    app.use(pinia);
-    setActivePinia(pinia);
-  });
-
   it('update baz', async () => {
     const { fooSpy, barSpy, bazSpy, store } = useNonDeepWatchStore();
 
@@ -522,3 +506,89 @@ const useNonDeepWatchStore = () => {
     bazSpy: watch.foo.children.bar.children.baz,
   };
 };
+
+describe('Watch only some properties', () => {
+  it('Value exists but no watch handler is defined', async () => {
+    const watch = {
+      countA: vi.fn(() => {}),
+    };
+
+    const useStore = defineStore('noWatchHandlerStore', {
+      state: () => ({
+        countA: 1,
+        countB: 1,
+      }),
+      watch,
+    });
+
+    const store = useStore();
+    expect(store.$watch).toEqual(watch);
+
+    store.countA = 2;
+
+    await nextTick();
+    expect(watch.countA).toHaveBeenCalledOnce();
+  });
+
+  it('Watch handler exists but value is undefined', async () => {
+    const watch = {
+      countA: vi.fn(() => {}),
+    };
+
+    // @ts-ignore
+    const useStore = defineStore('noWatchValueStore', {
+      state: () => ({
+        countB: 1,
+      }),
+      watch,
+    });
+
+    const store = useStore();
+    store.countB = 2;
+
+    await nextTick();
+    expect(watch.countA).not.toBeCalled();
+  });
+
+  it('WatchObject with undefined handler', async () => {
+    const watch = {
+      user: {
+        name: vi.fn(() => {}),
+      },
+    };
+
+    // @ts-ignore
+    const useStore = defineStore('undefinedWatchHandlerStore', {
+      state: () => ({
+        user: {
+          name: 'John',
+        },
+      }),
+      watch,
+    });
+
+    const store = useStore();
+    store.user.name = 'Jane';
+
+    await nextTick();
+
+    expect(watch.user.name).toHaveBeenCalledOnce();
+  });
+});
+
+describe('Not passing the watch property', () => {
+  it('Verify that the value of the $watch property is undefined', () => {
+    const useStore = defineStore('noWatchStore', {
+      state: () => ({
+        foo: {
+          bar: {
+            baz: 1,
+          },
+        },
+      }),
+    });
+
+    const store = useStore();
+    expect(store.$watch).toBeUndefined();
+  });
+});
