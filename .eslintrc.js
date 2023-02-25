@@ -19,6 +19,9 @@ module.exports = {
       rules: {
         'no-restricted-globals': 'off',
         'no-restricted-syntax': 'off',
+        '@typescript-eslint/ban-ts-comment': 'off',
+        'prefer-const': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
       },
     },
   ],
