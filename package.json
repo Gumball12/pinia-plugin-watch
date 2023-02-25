@@ -1,6 +1,6 @@
 {
   "name": "pinia-plugin-watch",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The easiest way to watch for your Pinia State.",
   "repository": {
     "type": "git",
