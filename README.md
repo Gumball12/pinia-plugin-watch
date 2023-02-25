@@ -66,6 +66,8 @@ const useStore = defineStore('store', {
 
 ## 📖 Usage
 
+> For other usage, please refer to the [test code](./__tests__/index.test.ts).
+
 ### Watch for non-nested states
 
 Define an object with the name of the state property you want to watch as a key and the handler as a value in the `watch` option.
