@@ -263,6 +263,6 @@ store.$watch.user.name; // Watch handler for the `user.name` state
 
 The `watch` option is copied to the `$watch` property of the store.
 
-## 🪪 License
+## License
 
 [MIT](./LICENSE)
