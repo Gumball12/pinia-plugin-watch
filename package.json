@@ -25,6 +25,14 @@
     "watch state",
     "vuex"
   ],
+  "packageManager": "pnpm@8.15.2",
+  "engineStrict": true,
+  "engines": {
+    "node": ">=20.0.0",
+    "yarn": "please-use-pnpm",
+    "npm": "please-use-pnpm",
+    "pnpm": ">=8.0.0"
+  },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
