@@ -16,11 +16,11 @@ Supports Pinia v2. (Vue 2 and 3)
 
 ```bash
 npm i pinia-plugin-watch
-yarn add pinia-plugin-watch # for yarn
-pnpm add pinia-plugin-watch # for pnpm
+yarn add pinia-plugin-watch # yarn
+pnpm add pinia-plugin-watch # pnpm
 ```
 
-### 2. Add the plugin to Pinia
+### 2. Using the plugin in Pinia
 
 ```ts
 import { createPinia } from 'pinia';
@@ -30,7 +30,7 @@ const pinia = createPinia();
 pinia.use(WatchPiniaPlugin);
 ```
 
-### 3. Use the plugin
+### 3. Watch the state
 
 ```ts
 import { defineStore } from 'pinia';
@@ -46,137 +46,18 @@ const useStore = defineStore('store', {
 
   // PiniaPluginWatch
   watch: {
-    count: (newValue, oldValue) => {
-      console.log('count changed', newValue, oldValue);
-    },
-
-    user: {
-      handler: (newValue, oldValue) => {
-        console.log('user changed', newValue, oldValue);
-      },
-      children: {
-        name: (newValue, oldValue) => {
-          console.log('user.name changed', newValue, oldValue);
-        },
-      },
-    },
-  },
-});
-```
-
-## 📖 Usage
-
-> For other usage, please refer to the [test code](./__tests__/index.test.ts).
-
-### Watch for non-nested states
-
-Define an object with the name of the state property you want to watch as a key and the handler as a value in the `watch` option.
-
-```ts
-const useStore = defineStore('store', {
-  state: () => ({
-    count: 0,
-  }),
-
-  watch: {
     // Watch `count`
-    count: (newValue, oldValue) => {
+    count: (newValue, oldValue, onCleanup, store) => {
       console.log('count changed', newValue, oldValue);
     },
-  },
-});
-```
 
-### Watch for nested states
-
-Similarly, define an object with the name of the state property you want to watch as a key and the handler as a value in the `watch` option.
-
-```ts
-const useStore = defineStore('store', {
-  state: () => ({
+    // Watch `user` and `user.name`
     user: {
-      name: 'John',
-      age: 20,
-    },
-  }),
-
-  watch: {
-    // Watch `user`
-    user: (newValue, oldValue) => {
-      console.log('user changed', newValue, oldValue);
-    },
-  },
-});
-
-const store = useStore();
-
-// "user changed"
-store.user = {
-  name: 'Jane',
-  age: 20,
-};
-
-// "user changed"
-store.user.name = 'Jane';
-```
-
-The `user` Watch handler defaults to tracking changes to the `user` and the properties(`user.name`, `user.age`) under it.
-
-If you don't want to track subproperties, pass the `deep` option to `false`:
-
-```ts
-const useStore = defineStore('store', {
-  state: () => ({
-    user: {
-      name: 'John',
-      age: 20,
-    },
-  }),
-
-  watch: {
-    // Watch `user`
-    user: {
-      deep: false, // Don't track subproperties
-      handler: (newValue, oldValue) => {
-        console.log('user changed', newValue, oldValue);
-      },
-    },
-  },
-});
-
-const store = useStore();
-
-// "user changed"
-store.user = {
-  name: 'Jane',
-  age: 20,
-};
-
-// nothing
-store.user.name = 'Jane';
-```
-
-If you want to define Watch handlers for child properties, use the `handler` and `children` properties:
-
-```ts
-const useStore = defineStore('store', {
-  state: () => ({
-    user: {
-      name: 'John',
-      age: 20,
-    },
-  }),
-
-  watch: {
-    user: {
-      deep: false,
-      // Watch `user`
-      handler: (newValue, oldValue) => {
+      handler: (newValue, oldValue, onCleanup, store) => {
         console.log('user changed', newValue, oldValue);
       },
       children: {
-        // Watch only `user.name`
-        name: (newValue, oldValue) => {
+        name: (newValue, oldValue, onCleanup, store) => {
           console.log('user.name changed', newValue, oldValue);
         },
       },
@@ -185,59 +66,7 @@ const useStore = defineStore('store', {
 });
 ```
 
-Note: The `children` and `handler` properties are not available in a non-nested state.
-
-### Using the Setup Store
-
-You can use it in the Setup Store method in the same way.
-
-```ts
-const useStore = defineStore(
-  'store',
-  () => {
-    const count = ref(0);
-    const user = ref(
-      reactive({
-        name: 'John',
-        age: 20,
-      }),
-    );
-
-    return {
-      count,
-      user,
-    };
-  },
-  {
-    watch: {
-      count: (newValue, oldValue) => {
-        console.log('count changed', newValue, oldValue);
-      },
-      user: {
-        handler: (newValue, oldValue) => {
-          console.log('user changed', newValue, oldValue);
-        },
-        children: {
-          name: (newValue, oldValue) => {
-            console.log('user.name changed', newValue, oldValue);
-          },
-        },
-      },
-    },
-  },
-);
-```
-
-### `$watch` Store property
-
-You can reference the Watch handler defined through the `store.$watch` property.
-
-```ts
-const store = useStore();
-
-store.$watch.count; // Watch handler for the `count` state
-store.$watch.user.name; // Watch handler for the `user.name` state
-```
+For usage examples, see the [Usage](./USAGE.md) documentation.
 
 ## 🌮 API
 
