@@ -592,3 +592,87 @@ describe('Not passing the watch property', () => {
     expect(store.$watch).toBeUndefined();
   });
 });
+
+describe('Reference the store inside the watch handler', () => {
+  it('Setup store', async () => {
+    const doSomethingSpy = vi.fn(() => {});
+
+    const useStore = defineStore(
+      'thisStore',
+      () => {
+        const foo = ref('foo');
+
+        return {
+          foo,
+          doSomething: doSomethingSpy,
+        };
+      },
+      {
+        watch: {
+          foo: (newValue, _2, _3, store) => {
+            store.doSomething();
+            expect(store.foo).toBe(newValue);
+          },
+        },
+      },
+    );
+
+    const store = useStore();
+    store.foo = 'bar';
+
+    await nextTick();
+    expect(doSomethingSpy).toHaveBeenCalledOnce();
+  });
+
+  it('Options store', async () => {
+    const doSomethingSpy = vi.fn(() => {});
+
+    const useStore = defineStore('thisStore', {
+      state: () => ({
+        foo: 'foo',
+      }),
+      actions: {
+        doSomething: doSomethingSpy,
+      },
+      watch: {
+        foo: (newValue, _2, _3, store) => {
+          store.doSomething();
+          expect(store.foo).toBe(newValue);
+        },
+      },
+    });
+
+    const store = useStore();
+    store.foo = 'bar';
+
+    await nextTick();
+    expect(doSomethingSpy).toHaveBeenCalledOnce();
+  });
+});
+
+it('oldValue, newValue, onCleanup', async () => {
+  const useStore = defineStore('oldValueStore', {
+    state: () => ({
+      foo: 'foo',
+      bar: 'bar',
+    }),
+    watch: {
+      foo: {
+        handler: (newValue, oldValue, onCleanup) => {
+          expect(newValue).toBe('bar');
+          expect(oldValue).toBe('foo');
+          expect(typeof onCleanup).toBe('function');
+        },
+      },
+      bar(newValue, oldValue, onCleanup) {
+        expect(newValue).toBe('baz');
+        expect(oldValue).toBe('bar');
+        expect(typeof onCleanup).toBe('function');
+      },
+    },
+  });
+
+  const store = useStore();
+  store.foo = 'bar';
+  store.bar = 'baz';
+});
