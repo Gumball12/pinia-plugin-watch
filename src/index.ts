@@ -26,14 +26,14 @@ type WatchOptions<Store, S extends object> = {
 };
 
 declare module 'pinia' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   export interface DefineStoreOptionsBase<S, Store> {
     watch?: WatchOptions<Store, S>;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  export interface PiniaCustomProperties<Id, S> {
-    $watch: Readonly<WatchOptions<Store, S>>;
+  export interface PiniaCustomProperties {
+    // NOTE: I'm not sure how to type this properly
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    $watch: any;
   }
 }
 
@@ -124,3 +124,10 @@ const isWatchHandlerObject = <T>(
   maybeWatcher: NonNullable<unknown>,
 ): maybeWatcher is WatchHandlerObject<Store, T> =>
   typeof maybeWatcher === 'object' && 'handler' in maybeWatcher;
+
+const watchState2 = <S extends object, W extends WatchOptions<Store, S>>(
+  state: S,
+  watchMap: W,
+) => {
+  //
+};
