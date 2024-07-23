@@ -33,7 +33,9 @@ declare module 'pinia' {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   export interface PiniaCustomProperties<Id, S> {
-    $watch: Readonly<WatchOptions<Store, S>>;
+    $watch: Readonly<WatchOptions<Store, S>> & {
+      clear: (key: keyof S) => void;
+    };
   }
 }
 
@@ -49,7 +51,12 @@ export const WatchPiniaPlugin = ({
 
   const { $state } = store;
 
-  store.$watch = watchMap;
+  store.$watch = {
+    ...watchMap,
+    clear: (key: keyof typeof $state) => {
+      clearWatcher($state, watchMap, key);
+    },
+  };
   watchState($state, watchMap, store);
 };
 
@@ -111,6 +118,33 @@ const watchState = <S extends object>(
 
     watchState(value, maybeWatcher, store);
   });
+};
+
+const clearWatcher = <S extends object>(
+  state: S,
+  watchMap: WatchOptions<Store, S>,
+  key: keyof S,
+) => {
+  const maybeWatcher = watchMap[key];
+
+  if (!maybeWatcher) {
+    return;
+  }
+
+  if (isWatchHandler(maybeWatcher)) {
+    delete watchMap[key];
+    return;
+  }
+
+  if (isWatchHandlerObject<typeof state[key]>(maybeWatcher)) {
+    delete watchMap[key];
+    return;
+  }
+
+  const value = state[key];
+  if (isObject(value)) {
+    clearWatcher(value, maybeWatcher, key);
+  }
 };
 
 const isObject = (value: unknown): value is object =>
