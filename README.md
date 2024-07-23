@@ -66,6 +66,46 @@ const useStore = defineStore('store', {
 });
 ```
 
+### 4. Clear the watcher
+
+```ts
+import { defineStore } from 'pinia';
+
+const useStore = defineStore('store', {
+  state: () => ({
+    count: 0,
+    user: {
+      name: 'John',
+      age: 20,
+    },
+  }),
+
+  // PiniaPluginWatch
+  watch: {
+    // Watch `count`
+    count: (newValue, oldValue, onCleanup, store) => {
+      console.log('count changed', newValue, oldValue);
+    },
+
+    // Watch `user` and `user.name`
+    user: {
+      handler: (newValue, oldValue, onCleanup, store) => {
+        console.log('user changed', newValue, oldValue);
+      },
+      children: {
+        name: (newValue, oldValue, onCleanup, store) => {
+          console.log('user.name changed', newValue, oldValue);
+        },
+      },
+    },
+  },
+});
+
+const store = useStore();
+store.$watch.clear('count'); // Clear the watcher for `count`
+store.$watch.clear('user'); // Clear the watcher for `user`
+```
+
 For usage examples, see the [Usage](./USAGE.md) documentation.
 
 ## 🌮 API
@@ -91,6 +131,12 @@ For usage examples, see the [Usage](./USAGE.md) documentation.
 - Type: `typeof options.watch`
 
 The `watch` option is copied to the `$watch` property of the store.
+
+### `store.$watch.clear`
+
+- Type: `(key: string) => void`
+
+The `clear` method allows you to remove a watcher from the store.
 
 ## License
 

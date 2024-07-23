@@ -57,7 +57,7 @@ describe('Option Store (Deep watch)', () => {
     await nextTick();
     expect(fooSpy).toHaveBeenCalledOnce(); // from #1
     expect(barSpy).not.toBeCalled();
-    expect(bazSpy).not.toBeCalled();
+    expect(bazSpy).not toBeCalled();
   });
 
   it('$patch object', async () => {
@@ -139,6 +139,27 @@ describe('Option Store (Deep watch)', () => {
     expect(barSpy).toHaveBeenCalledOnce(); // from #1
     expect(bazSpy).toHaveBeenCalledOnce(); // from #1
   });
+
+  it('clear watch', async () => {
+    const { store, fooSpy, barSpy, bazSpy } = useStore();
+
+    store.foo.bar.baz = 10; // #1
+    expect(store.foo.bar.baz).toBe(10);
+
+    await nextTick();
+    expect(fooSpy).toHaveBeenCalledOnce(); // from #1
+    expect(barSpy).toHaveBeenCalledOnce(); // from #1
+    expect(bazSpy).toHaveBeenCalledOnce(); // from #1
+
+    store.$watch.clear('foo'); // #2
+    store.foo.bar.baz = 20; // #3
+    expect(store.foo.bar.baz).toBe(20);
+
+    await nextTick();
+    expect(fooSpy).toHaveBeenCalledOnce(); // from #1
+    expect(barSpy).toHaveBeenCalledOnce(); // from #1
+    expect(bazSpy).toHaveBeenCalledOnce(); // from #1
+  });
 });
 
 const useStore = () => {
@@ -179,9 +200,9 @@ describe('Setup Store (Deep watch)', () => {
   it('update baz', async () => {
     const { fooSpy, barSpy, bazSpy, store } = useSetupStore();
 
-    expect(fooSpy).not.toBeCalled();
-    expect(barSpy).not.toBeCalled();
-    expect(bazSpy).not.toBeCalled();
+    expect(fooSpy).not toBeCalled();
+    expect(barSpy).not toBeCalled();
+    expect(bazSpy).not toBeCalled();
 
     store.foo.bar.baz = 10; // #1
     expect(store.foo.bar.baz).toBe(10);
@@ -203,7 +224,7 @@ describe('Setup Store (Deep watch)', () => {
     await nextTick();
     expect(fooSpy).toHaveBeenCalledOnce(); // from #1
     expect(barSpy).toHaveBeenCalledOnce(); // from #1
-    expect(bazSpy).not.toBeCalled();
+    expect(bazSpy).not toBeCalled();
   });
 
   it('update foo', async () => {
@@ -218,8 +239,8 @@ describe('Setup Store (Deep watch)', () => {
 
     await nextTick();
     expect(fooSpy).toHaveBeenCalledOnce(); // from #1
-    expect(barSpy).not.toBeCalled();
-    expect(bazSpy).not.toBeCalled();
+    expect(barSpy).not toBeCalled();
+    expect(bazSpy).not toBeCalled();
   });
 
   it('$patch object', async () => {
@@ -300,6 +321,27 @@ describe('Setup Store (Deep watch)', () => {
     expect(barSpy).toHaveBeenCalledOnce(); // from #1
     expect(bazSpy).toHaveBeenCalledOnce(); // from #1
   });
+
+  it('clear watch', async () => {
+    const { store, fooSpy, barSpy, bazSpy } = useSetupStore();
+
+    store.foo.bar.baz = 10; // #1
+    expect(store.foo.bar.baz).toBe(10);
+
+    await nextTick();
+    expect(fooSpy).toHaveBeenCalledOnce(); // from #1
+    expect(barSpy).toHaveBeenCalledOnce(); // from #1
+    expect(bazSpy).toHaveBeenCalledOnce(); // from #1
+
+    store.$watch.clear('foo'); // #2
+    store.foo.bar.baz = 20; // #3
+    expect(store.foo.bar.baz).toBe(20);
+
+    await nextTick();
+    expect(fooSpy).toHaveBeenCalledOnce(); // from #1
+    expect(barSpy).toHaveBeenCalledOnce(); // from #1
+    expect(bazSpy).toHaveBeenCalledOnce(); // from #1
+  });
 });
 
 const useSetupStore = () => {
@@ -356,17 +398,17 @@ describe('Option Store (Non-deep watch)', () => {
   it('update baz', async () => {
     const { fooSpy, barSpy, bazSpy, store } = useNonDeepWatchStore();
 
-    expect(fooSpy).not.toBeCalled();
-    expect(barSpy).not.toBeCalled();
-    expect(bazSpy).not.toBeCalled();
+    expect(fooSpy).not toBeCalled();
+    expect(barSpy).not toBeCalled();
+    expect(bazSpy).not toBeCalled();
 
     store.foo.bar.baz = 10; // #1
     expect(store.foo.bar.baz).toBe(10);
 
     await nextTick();
 
-    expect(fooSpy).not.toBeCalled();
-    expect(barSpy).not.toBeCalled();
+    expect(fooSpy).not toBeCalled();
+    expect(barSpy).not toBeCalled();
     expect(bazSpy).toHaveBeenCalledOnce(); // from #1
   });
 
@@ -379,9 +421,9 @@ describe('Option Store (Non-deep watch)', () => {
     };
 
     await nextTick();
-    expect(fooSpy).not.toBeCalled();
+    expect(fooSpy).not toBeCalled();
     expect(barSpy).toHaveBeenCalledOnce(); // from #1
-    expect(bazSpy).not.toBeCalled();
+    expect(bazSpy).not toBeCalled();
   });
 
   it('update foo', async () => {
@@ -396,8 +438,8 @@ describe('Option Store (Non-deep watch)', () => {
 
     await nextTick();
     expect(fooSpy).toHaveBeenCalledOnce(); // from #1
-    expect(barSpy).not.toBeCalled();
-    expect(bazSpy).not.toBeCalled();
+    expect(barSpy).not toBeCalled();
+    expect(bazSpy).not toBeCalled();
   });
 
   it('$patch object', async () => {
@@ -420,8 +462,8 @@ describe('Option Store (Non-deep watch)', () => {
     expect(store.foo.bar.baz).toBe(20);
 
     await nextTick();
-    expect(fooSpy).not.toBeCalled();
-    expect(barSpy).not.toBeCalled();
+    expect(fooSpy).not toBeCalled();
+    expect(barSpy).not toBeCalled();
     expect(bazSpy).toHaveBeenCalledTimes(2); // from #1, #2
   });
 
@@ -433,8 +475,8 @@ describe('Option Store (Non-deep watch)', () => {
     expect(store.foo.bar.baz).toBe(10);
 
     await nextTick();
-    expect(fooSpy).not.toBeCalled();
-    expect(barSpy).not.toBeCalled();
+    expect(fooSpy).not toBeCalled();
+    expect(barSpy).not toBeCalled();
     expect(bazSpy).toHaveBeenCalledOnce(); // from #1
 
     // #2
@@ -445,8 +487,8 @@ describe('Option Store (Non-deep watch)', () => {
     expect(store.foo.bar.baz).toBe(20);
 
     await nextTick();
-    expect(fooSpy).not.toBeCalled();
-    expect(barSpy).not.toBeCalled();
+    expect(fooSpy).not toBeCalled();
+    expect(barSpy).not toBeCalled();
     expect(bazSpy).toHaveBeenCalledTimes(2); // from #1, #2
   });
 
@@ -457,8 +499,8 @@ describe('Option Store (Non-deep watch)', () => {
     expect(store.foo.bar.baz).toBe(10);
 
     await nextTick();
-    expect(fooSpy).not.toBeCalled();
-    expect(barSpy).not.toBeCalled();
+    expect(fooSpy).not toBeCalled();
+    expect(barSpy).not toBeCalled();
     expect(bazSpy).toHaveBeenCalledOnce(); // from #1
 
     store.$reset(); // #2
@@ -466,7 +508,28 @@ describe('Option Store (Non-deep watch)', () => {
 
     await nextTick();
     expect(fooSpy).toHaveBeenCalledOnce(); // from #2
-    expect(barSpy).not.toBeCalled();
+    expect(barSpy).not toBeCalled();
+    expect(bazSpy).toHaveBeenCalledOnce(); // from #1
+  });
+
+  it('clear watch', async () => {
+    const { store, fooSpy, barSpy, bazSpy } = useNonDeepWatchStore();
+
+    store.foo.bar.baz = 10; // #1
+    expect(store.foo.bar.baz).toBe(10);
+
+    await nextTick();
+    expect(fooSpy).not toBeCalled();
+    expect(barSpy).not toBeCalled();
+    expect(bazSpy).toHaveBeenCalledOnce(); // from #1
+
+    store.$watch.clear('foo'); // #2
+    store.foo.bar.baz = 20; // #3
+    expect(store.foo.bar.baz).toBe(20);
+
+    await nextTick();
+    expect(fooSpy).not toBeCalled();
+    expect(barSpy).not toBeCalled();
     expect(bazSpy).toHaveBeenCalledOnce(); // from #1
   });
 });
@@ -547,7 +610,7 @@ describe('Watch only some properties', () => {
     store.countB = 2;
 
     await nextTick();
-    expect(watch.countA).not.toBeCalled();
+    expect(watch.countA).not toBeCalled();
   });
 
   it('WatchObject with undefined handler', async () => {
